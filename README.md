@@ -1,4 +1,4 @@
-# My attempt at segmenting DICOM images with cancer
+# DICOM Analysis
 #### Author : Ali Snedden
 #### License: MIT 
 ## Purpose:
@@ -19,7 +19,7 @@ an open source of imaging data.
 1. Python 3.6+ is required for this code to work.
 2. Clone the directory, e.g.
 ```
-git clone 
+git clone https://github.com/astrophys/dicom_analysis.git
 ```
 
 ## Usage:
