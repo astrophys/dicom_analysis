@@ -24,7 +24,7 @@ git clone https://github.com/astrophys/dicom_analysis.git
 
 ## Usage:
 ```
-python3 ./src/dicom_analysis.py some_file.dicom
+python3 ./src/dicom_analysis.py some_file.dcm
 ```
 
 <!-- 5. Mention Runge-Kutta integration of DE's from OSU/IDE paper -->
