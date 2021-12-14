@@ -142,6 +142,7 @@ def main():
         shape = data.pixel_array.shape
         pixelT = np.zeros([shape[0], shape[1], len(fileL)])      # 3D matrix, or Tensor
         idx=0                   # File index
+        # Assume that files are sanely named AND have z-pos embeded in filename
         fileL = sorted(fileL)
         for fPath in fileL:
             data = pydicom.dcmread(fPath)

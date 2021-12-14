@@ -13,6 +13,8 @@ def gaussian_derivative_1D(X=None, Mu=None, S=None):
         function and returns it's value evaluated at X
     RETURN:
         A float
+    NOTES:
+        equivalent to derivative_of_gaussian() in SEGMENT_gsl/parallel/vessels
     DEBUG:
     FUTURE:
     """
@@ -34,6 +36,8 @@ def gaussian_derivative_kernel(N=None, S=None):
         derivative of the image at every point.
     RETURN:
         Numpy vector, the kernel
+    NOTES:
+        equivalent to derivative_gaussian_kernel() in SEGMENT_gsl/parallel/vessels
     DEBUG:
     FUTURE:
     """
@@ -58,6 +62,8 @@ def gaussian_derivative_of_tensor(DataT=None, Axis=None, S=None):
         differentiated along the axis of choice.
     RETURN:
         Numpy array, 2D or 3D numpy array
+    NOTES:
+        equivalent to gaussian_derivative() in SEGMENT_gsl/parallel/vessels
     DEBUG:
     FUTURE:
     """
@@ -65,7 +71,24 @@ def gaussian_derivative_of_tensor(DataT=None, Axis=None, S=None):
     kernelWidth = int(2 * nSig * S + 1) # 3 sigma left of center, 3 sigma right of center
     kernelV     = gaussian_derivative_kernel(N=kernelWidth, S=S)
     shape = DataT.shape
-    for i in range(shape[0]):
+    ## 3D
+    if(len(DataT.shape) == 3):
+        if(Axis == 'x' or Axis == 0):
+            for i in range(shape[0]):
+        if(Axis == 'y' or Axis == 1):
+            for i in range(shape[1]):
+        if(Axis == 'z' or Axis == 2):
+            for i in range(shape[2]):
+    ## 2D
+    if(len(DataT.shape) == 2):
+        if(Axis == 'x' or Axis == 0):
+            for i in range(shape[0]):
+        if(Axis == 'y' or Axis == 1):
+            for i in range(shape[1]):
+    ## 1D
+    if(len(DataT.shape) == 1):
+        if(Axis == 'x' or Axis == 0):
+            for i in range(shape[0]):
         
 
 
