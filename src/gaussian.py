@@ -18,7 +18,7 @@ def gaussian_derivative_1D(X=None, Mu=None, S=None):
     DEBUG:
     FUTURE:
     """
-    return( (-1/(S**3 * np.sqrt(2 * np.pi)) * (X - Mu) * np.exp(-(X-Mu)**2 / (2*S**2))
+    return( (-1/(S**3 * np.sqrt(2 * np.pi)) * (X - Mu) * np.exp(-(X-Mu)**2 / (2*S**2))))
     
 
 
@@ -69,26 +69,63 @@ def gaussian_derivative_of_tensor(DataT=None, Axis=None, S=None):
     """
     nSig        = 3                     # Number of sigma to use for kernelWidth
     kernelWidth = int(2 * nSig * S + 1) # 3 sigma left of center, 3 sigma right of center
+    halfKern    = int(nSig * S)         # Get the 'half kernel width'
     kernelV     = gaussian_derivative_kernel(N=kernelWidth, S=S)
-    shape = DataT.shape
+    shape       = DataT.shape
+    derivT      = np.zeros(shape)
     ## 3D
     if(len(DataT.shape) == 3):
-        if(Axis == 'x' or Axis == 0):
-            for i in range(shape[0]):
-        if(Axis == 'y' or Axis == 1):
-            for i in range(shape[1]):
-        if(Axis == 'z' or Axis == 2):
-            for i in range(shape[2]):
+        for i in range(shape[0]):
+            for j in range(shape[1]):
+                for k in range(shape[2]):
+                    chunkV =np.zeros([kernelWidth])   # Chunk of data to compute deriv on
+
+                    # Handle boundary conditions, basically set to 0 outside of image
+                    if(Axis == 'x' or Axis == 0):
+                        sliceV = DataT[:,j,k]
+                        # Check bounds
+                        low = i - halfKern
+                        up  = shape[0] - (i + halfKern + 1)
+                        idx = i
+                    elif(Axis == 'y' or Axis == 1):
+                        sliceV = DataT[i,:,k]
+                        # Check bounds
+                        low = j - halfKern
+                        up  = shape[1] - (j + halfKern + 1)
+                        idx = j
+                    elif(Axis == 'z' or Axis == 2):
+                        sliceV = DataT[i,j,:]
+                        # Check bounds
+                        low = k - halfKern
+                        up  = shape[2] - (k + halfKern + 1)
+                        idx = k
+                    else:
+                        exit_with_error("ERROR!!! {} is invalid Axis in 3D".format(Axis))
+                    ### Assign data from DataT to chunkV
+                    # comfortably w/in DataT bounds
+                    if(low >= 0 and up >= 0):
+                        chunkV = sliceV[(idx-halfKern):(idx+halfKern+1)]    # Check bounds here
+                    elif(low < 0):
+                        chunkV[(low-1):] = sliceV[0:(kernelWidth+low)]      # recall low < 0
+                    elif(up < 0):
+                        chunkV[0:] = sliceV[idx:]
     ## 2D
     if(len(DataT.shape) == 2):
-        if(Axis == 'x' or Axis == 0):
-            for i in range(shape[0]):
-        if(Axis == 'y' or Axis == 1):
-            for i in range(shape[1]):
+        for i in range(shape[0]):
+            for j in range(shape[1]):
+                if(Axis == 'x' or Axis == 0):
+                    exit_with_error("ERROR!! Not yet implemented")
+                elif(Axis == 'y' or Axis == 1):
+                    exit_with_error("ERROR!! Not yet implemented")
+                else:
+                    exit_with_error("ERROR!!! {} is invalid Axis in 2D".format(Axis))
     ## 1D
     if(len(DataT.shape) == 1):
-        if(Axis == 'x' or Axis == 0):
-            for i in range(shape[0]):
+        for i in range(shape[0]):
+            if(Axis == 'x' or Axis == 0):
+                exit_with_error("ERROR!! Not yet implemented")
+            else:
+                exit_with_error("ERROR!!! {} is invalid Axis in 1D".format(Axis))
         
 
 

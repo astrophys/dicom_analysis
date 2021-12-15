@@ -16,6 +16,7 @@ from matplotlib import pyplot as plt
 from matplotlib.ticker import FormatStrFormatter
 from matplotlib.widgets import Slider
 import pydicom
+from gaussian import gaussian_derivative_of_tensor
 # my code
 from error import exit_with_error
 from error import warning
@@ -159,6 +160,14 @@ def main():
         pixelM = data.pixel_array
         plot_single_dicom(PixelM=pixelM)
 
+
+    # Test Gaussion derivative
+    testT = np.zeros([10,10,10])
+    for i in range(testT.shape[0]):
+        for j in range(testT.shape[1]):
+            for k in range(testT.shape[2]):
+                testT[i,j,k] = 2*i + j*j + 3*k*k*k
+    gaussian_derivative_of_tensor(DataT=testT, Axis='x', S=1)
     
     print("Ended : %s"%(time.strftime("%D:%H:%M:%S")))
     print("Run Time : {:.4f} h".format((time.time() - startTime)/3600.0))
