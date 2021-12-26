@@ -17,6 +17,7 @@ def gaussian_derivative_1D(X=None, Mu=None, S=None):
         equivalent to derivative_of_gaussian() in SEGMENT_gsl/parallel/vessels
     DEBUG:
     FUTURE:
+        1. Figure out why I'm off by a negative here
     """
     return( (1/(S**3 * np.sqrt(2 * np.pi)) * (Mu - X) * np.exp(-(X-Mu)**2 / (2*S**2))))
     
@@ -86,29 +87,54 @@ def gaussian_derivative_of_tensor(DataT=None, Axis=None, S=None):
                         # Check bounds
                         low = i - hW
                         up  = shape[0] - (i + hW + 1)
-                        idx = i
+                        idx = i             # 'idx' instead of i to generalize below
                     elif(Axis == 'y' or Axis == 1):
                         sliceV = DataT[i,:,k]
                         # Check bounds
                         low = j - hW
                         up  = shape[1] - (j + hW + 1)
-                        idx = j
+                        idx = j             # 'idx' instead of j to generalize below
                     elif(Axis == 'z' or Axis == 2):
                         sliceV = DataT[i,j,:]
                         # Check bounds
                         low = k - hW
                         up  = shape[2] - (k + hW + 1)
-                        idx = k
+                        idx = k             # 'idx' instead of k to generalize below
                     else:
                         exit_with_error("ERROR!!! {} is invalid Axis in 3D".format(Axis))
-                    ### Assign data from DataT to chunkV
-                    # comfortably w/in DataT bounds
+                    ###### Assign data from DataT to chunkV ######
+                    #### Conditions :
+                    #### 1. chunkV[] should be 'centered' on sliceV[idx]
+                    #### 2. if chunkV[] overruns bounds of sliceV[], leave the 'hanging'
+                    ####    ends of chunkV[] as '0'
+                    # comfortably w/in DataT bounds, e.g. 
+                    # E.g. idx = 5, low=2, up=1
+                    #
+                    #                   low=2                idx == 5              up=1
+                    #                   ___|___                 ||                  _|_
+                    #                  |       |                \/                 |   |
+                    #  chunkV = array(          [ 4.,  6.,  8., 10., 12., 14., 16.])
+                    #  sliceV = array([ 0.,  2.,  4.,  6.,  8., 10., 12., 14., 16., 18.])
                     if(low >= 0 and up >= 0):
                         chunkV = sliceV[(idx-hW):(idx+hW+1)]    # Check bounds here
+                    # E.g. idx = 2, low=-1, up=4
+                    # 
+                    #                 low=-1    idx == 2
+                    #                  _|_         ||
+                    #                 |   |        \/
+                    #  chunkV = array([ 0,  0,  2,  4,  6,  8,  10 ])
+                    #  sliceV = array(    [ 0,  2,  4,  6,  8,  10,  12,  14,  16,  18])
                     elif(low < 0):
                         chunkV[abs(low):] = sliceV[0:(kW+low)]      # recall low < 0
+                    # E.g. idx = 8        
+                    #
+                    #                                                 idx == 2     up == -2
+                    #                                                     ||        __|__
+                    #                                                     \/       |     |
+                    #  chunkV = array(                     [10,  12,  14, 16,  18,  0,  0 ])
+                    #  sliceV = array([ 0,  2,  4,  6,  8,  10,  12,  14, 16,  18])
                     elif(up < 0):
-                        chunkV[0:] = sliceV[idx:]
+                        chunkV[:up] = sliceV[idx-hW:]
                     print("({:<2d} {:<2d} {:<2d}) : d/dx = {:<.4f}".format(i,j,k,np.dot(chunkV, kernelV)))
     ## 2D
     if(len(DataT.shape) == 2):
