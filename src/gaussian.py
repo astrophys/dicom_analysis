@@ -51,7 +51,7 @@ def gaussian_derivative_kernel(N=None, S=None):
     return(kernelV)
 
 
-def gaussian_derivative_of_tensor(DataT=None, Axis=None, S=None):
+def gaussian_derivative_of_tensor(DataT=None, Axis=None, S=None, Verbose=False):
     """
     ARGS:
         DataT   = (2D or 3D Numpy array), Input data to differentiate
@@ -135,7 +135,9 @@ def gaussian_derivative_of_tensor(DataT=None, Axis=None, S=None):
                     #  sliceV = array([ 0,  2,  4,  6,  8,  10,  12,  14, 16,  18])
                     elif(up < 0):
                         chunkV[:up] = sliceV[idx-hW:]
-                    print("({:<2d} {:<2d} {:<2d}) : d/dx = {:<.4f}".format(i,j,k,np.dot(chunkV, kernelV)))
+                    if(Verbose == True):
+                        print("({:<2d} {:<2d} {:<2d}) : d/dx = {:<.4f}".format(i,j,k,
+                              np.dot(chunkV, kernelV)))
     ## 2D
     if(len(DataT.shape) == 2):
         for i in range(shape[0]):
