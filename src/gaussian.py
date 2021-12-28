@@ -121,6 +121,7 @@ def gaussian_derivative_of_tensor(DataT=None, Axis=None, S=None, Verbose=False):
                     #### 1. chunkV[] should be 'centered' on sliceV[idx]
                     #### 2. if chunkV[] overruns bounds of sliceV[], leave the 'hanging'
                     ####    ends of chunkV[] as '0'
+                    #### 3. Using testT from dicom_analysis.py
                     # comfortably w/in DataT bounds, e.g. 
                     # E.g. idx = 5, low=2, up=1
                     #
@@ -156,19 +157,58 @@ def gaussian_derivative_of_tensor(DataT=None, Axis=None, S=None, Verbose=False):
     if(len(DataT.shape) == 2):
         for i in range(shape[0]):
             for j in range(shape[1]):
+                chunkV =np.zeros([kW])   # Chunk of data to compute deriv on
+                # Handle boundary conditions, basically set to 0 outside of image
                 if(Axis == 'x' or Axis == 0):
-                    exit_with_error("ERROR!! Not yet implemented")
+                    sliceV = DataT[:,j]
+                    # Check bounds
+                    low = i - hW
+                    up  = shape[0] - (i + hW + 1)
+                    idx = i             # 'idx' instead of i to generalize below
                 elif(Axis == 'y' or Axis == 1):
-                    exit_with_error("ERROR!! Not yet implemented")
+                    sliceV = DataT[i,:]
+                    # Check bounds
+                    low = j - hW
+                    up  = shape[1] - (j + hW + 1)
+                    idx = j             # 'idx' instead of j to generalize below
                 else:
-                    exit_with_error("ERROR!!! {} is invalid Axis in 2D".format(Axis))
+                    exit_with_error("ERROR!!! {} is invalid Axis in 3D".format(Axis))
+                #
+                # See comments above in 3D conditional for relevant debugging details
+                #
+                if(low >= 0 and up >= 0):
+                    chunkV = sliceV[(idx-hW):(idx+hW+1)]    # Check bounds here
+                elif(low < 0):
+                    chunkV[abs(low):] = sliceV[0:(kW+low)]      # recall low < 0
+                elif(up < 0):
+                    chunkV[:up] = sliceV[idx-hW:]
+                if(Verbose == True):
+                    print("({:<2d} {:<2d} : d/dx = {:<.4f}".format(i,j,
+                          np.dot(chunkV, kernelV)))
     ## 1D
     if(len(DataT.shape) == 1):
         for i in range(shape[0]):
+            chunkV =np.zeros([kW])   # Chunk of data to compute deriv on
+            # Handle boundary conditions, basically set to 0 outside of image
             if(Axis == 'x' or Axis == 0):
-                exit_with_error("ERROR!! Not yet implemented")
+                sliceV = DataT[:]
+                # Check bounds
+                low = i - hW
+                up  = shape[0] - (i + hW + 1)
+                idx = i             # 'idx' instead of i to generalize below
             else:
                 exit_with_error("ERROR!!! {} is invalid Axis in 1D".format(Axis))
+            #
+            # See comments above in 3D conditional for relevant debugging details
+            #
+            if(low >= 0 and up >= 0):
+                chunkV = sliceV[(idx-hW):(idx+hW+1)]    # Check bounds here
+            elif(low < 0):
+                chunkV[abs(low):] = sliceV[0:(kW+low)]      # recall low < 0
+            elif(up < 0):
+                chunkV[:up] = sliceV[idx-hW:]
+            if(Verbose == True):
+                print("({:<2d} : d/dx = {:<.4f}".format(i, np.dot(chunkV, kernelV)))
         
 
 

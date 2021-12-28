@@ -162,6 +162,7 @@ def main():
 
 
     #### Test Gaussion derivative
+    ## 3D
     #testT = np.zeros([10,10,10])
     #for i in range(testT.shape[0]):
     #    for j in range(testT.shape[1]):
@@ -170,6 +171,18 @@ def main():
     #gaussian_derivative_of_tensor(DataT=testT, Axis='x', S=1)
     #gaussian_derivative_of_tensor(DataT=testT, Axis='y', S=1)
     #gaussian_derivative_of_tensor(DataT=testT, Axis='z', S=1, Verbose=True)
+    ## 2D
+    #testT = np.zeros([10,10])
+    #for i in range(testT.shape[0]):
+    #    for j in range(testT.shape[1]):
+    #        testT[i,j] = 2*i + j*j
+    ##gaussian_derivative_of_tensor(DataT=testT, Axis='x', S=1, Verbose=True)
+    #gaussian_derivative_of_tensor(DataT=testT, Axis='y', S=1, Verbose=True)
+    ## 1D
+    testT = np.zeros([10])
+    for i in range(testT.shape[0]):
+        testT[i] = 2*i
+    gaussian_derivative_of_tensor(DataT=testT, Axis='x', S=1, Verbose=True)
     ####
 
     print("Ended : %s"%(time.strftime("%D:%H:%M:%S")))
