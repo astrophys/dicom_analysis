@@ -161,16 +161,17 @@ def main():
         plot_single_dicom(PixelM=pixelM)
 
 
-    # Test Gaussion derivative
-    testT = np.zeros([10,10,10])
-    for i in range(testT.shape[0]):
-        for j in range(testT.shape[1]):
-            for k in range(testT.shape[2]):
-                testT[i,j,k] = 2*i + j*j + 3*k*k*k
-    gaussian_derivative_of_tensor(DataT=testT, Axis='x', S=1)
-    gaussian_derivative_of_tensor(DataT=testT, Axis='y', S=1)
-    gaussian_derivative_of_tensor(DataT=testT, Axis='z', S=1, Verbose=True)
-    
+    #### Test Gaussion derivative
+    #testT = np.zeros([10,10,10])
+    #for i in range(testT.shape[0]):
+    #    for j in range(testT.shape[1]):
+    #        for k in range(testT.shape[2]):
+    #            testT[i,j,k] = 2*i + j*j + 3*k*k*k
+    #gaussian_derivative_of_tensor(DataT=testT, Axis='x', S=1)
+    #gaussian_derivative_of_tensor(DataT=testT, Axis='y', S=1)
+    #gaussian_derivative_of_tensor(DataT=testT, Axis='z', S=1, Verbose=True)
+    ####
+
     print("Ended : %s"%(time.strftime("%D:%H:%M:%S")))
     print("Run Time : {:.4f} h".format((time.time() - startTime)/3600.0))
     sys.exit(0)

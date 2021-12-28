@@ -64,8 +64,22 @@ def gaussian_derivative_of_tensor(DataT=None, Axis=None, S=None, Verbose=False):
     RETURN:
         Numpy array, 2D or 3D numpy array
     NOTES:
-        equivalent to gaussian_derivative() in SEGMENT_gsl/parallel/vessels
+        equivalent to gaussian_derivative() in
+        SEGMENT_gsl/parallel/vessels/src/gaussian_smoothing.c
     DEBUG:
+        1. Using testT[i,j,k] = 2*i + j*j + 3*k*k*k, I tested the derivative
+           in x,y and z. When fully w/in range of sliceV, it gets the magnitude
+           of the derivative correct.
+        
+           E.g. 
+                d(testT)/dx         = -1.9913,  should be 2.0
+                d(testT)/dy|_{y=4}  = -7.9651,  should be 8.0
+                d(testT)/dz|_{z=4}  = -152.1613 should be 144
+
+           Clearly it does pretty well in the x and y axis b/c the function is
+           moderately changing. Clearly it is too low resolution for resolving the 
+           fast changing z-axis.
+        
     FUTURE:
     """
     nSig        = 3                     # Number of sigma to use for kernelWidth
