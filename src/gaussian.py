@@ -38,7 +38,8 @@ def gaussian_derivative_kernel(N=None, S=None):
     RETURN:
         Numpy vector, the kernel
     NOTES:
-        equivalent to derivative_gaussian_kernel() in SEGMENT_gsl/parallel/vessels
+        equivalent to derivative_gaussian_kernel() in
+        ~/Code/C/Notre_Dame/SEGMENT_gsl/parallel/vessels
     DEBUG:
     FUTURE:
     """
@@ -65,7 +66,7 @@ def gaussian_derivative_of_tensor(DataT=None, Axis=None, S=None, Verbose=False):
         Numpy array, 2D or 3D numpy array
     NOTES:
         equivalent to gaussian_derivative() in
-        SEGMENT_gsl/parallel/vessels/src/gaussian_smoothing.c
+        ~/Code/C/Notre_Dame/SEGMENT_gsl/parallel/vessels/src/gaussian_smoothing.c
     DEBUG:
         1. Using testT[i,j,k] = 2*i + j*j + 3*k*k*k, I tested the derivative
            in x,y and z. When fully w/in range of sliceV, it gets the magnitude
@@ -153,6 +154,7 @@ def gaussian_derivative_of_tensor(DataT=None, Axis=None, S=None, Verbose=False):
                     if(Verbose == True):
                         print("({:<2d} {:<2d} {:<2d}) : d/dx = {:<.4f}".format(i,j,k,
                               np.dot(chunkV, kernelV)))
+                    derivT[i,j,k] = np.dot(chunkV, kernelV)
     ## 2D
     if(len(DataT.shape) == 2):
         for i in range(shape[0]):
@@ -185,6 +187,7 @@ def gaussian_derivative_of_tensor(DataT=None, Axis=None, S=None, Verbose=False):
                 if(Verbose == True):
                     print("({:<2d} {:<2d} : d/dx = {:<.4f}".format(i,j,
                           np.dot(chunkV, kernelV)))
+                derivT[i,j] = np.dot(chunkV, kernelV)
     ## 1D
     if(len(DataT.shape) == 1):
         for i in range(shape[0]):
@@ -209,15 +212,8 @@ def gaussian_derivative_of_tensor(DataT=None, Axis=None, S=None, Verbose=False):
                 chunkV[:up] = sliceV[idx-hW:]
             if(Verbose == True):
                 print("({:<2d} : d/dx = {:<.4f}".format(i, np.dot(chunkV, kernelV)))
+            derivT[i] = np.dot(chunkV, kernelV)
         
+    return(derivT)
 
 
-def hessian(String):
-    """
-    ARGS:
-    DESCRIPTION:
-    RETURN:
-    DEBUG:
-    FUTURE:
-    """
-    sys.stderr.write(String)
