@@ -34,7 +34,7 @@ def extract_local_shape(SigmaL=None, DataT=None):
         e1T = np.zeros(shape)
         e2T = np.zeros(shape)
         e3T = np.zeros(shape)
-        maxFrob = 0             # Maximum frobenius norm
+        maxFrob = 0.0             # Maximum frobenius norm
 
         # Compute 2nd derivatives
         print("\t    dxT")
@@ -88,7 +88,7 @@ def extract_local_shape(SigmaL=None, DataT=None):
                                                [dxzT[i,j,k], dyzT[i,j,k], dzzT[i,j,k]]])
                         # Compute eigenvalues / vectors at each voxel
                         [e1,e2,e3],[e1V,e2V,e3V]= np.linalg.eig(hessianM)
-                        maxFrob = np.max(maxFrob, np.sqrt(e1**2 + e2**2 + e3**2))
+                        maxFrob = max(maxFrob, np.sqrt(e1**2 + e2**2 + e3**2))
                         e1T[i,j,k] = e1
                         e2T[i,j,k] = e2
                         e3T[i,j,k] = e3
