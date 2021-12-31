@@ -17,6 +17,7 @@ from matplotlib.ticker import FormatStrFormatter
 from matplotlib.widgets import Slider
 import pydicom
 from gaussian import gaussian_derivative_of_tensor
+from hessian import extract_local_shape
 # my code
 from error import exit_with_error
 from error import warning
@@ -184,6 +185,9 @@ def main():
         testT[i] = 2*i
     gaussian_derivative_of_tensor(DataT=testT, Axis='x', S=1, Verbose=True)
     ####
+
+    (vesselT, vSigmaT, clustT, cSigmaT) = extract_local_shape(SigmaL=[1,2], DataT=pixelT)
+
 
     print("Ended : %s"%(time.strftime("%D:%H:%M:%S")))
     print("Run Time : {:.4f} h".format((time.time() - startTime)/3600.0))
