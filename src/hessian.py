@@ -30,25 +30,51 @@ def extract_local_shape(SigmaL=None, DataT=None):
     # Compute maximum Frobenius norm
     for s in SigmaL:
         print("\tSigma = {}".format(s))
+        print("\t  Computing derivatives")
         e1T = np.zeros(shape)
         e2T = np.zeros(shape)
         e3T = np.zeros(shape)
         maxFrob = 0             # Maximum frobenius norm
+
         # Compute 2nd derivatives
+        print("\t    dxT")
+        sys.stdout.flush()
         dxT  = gaussian_derivative_of_tensor(DataT=DataT, Axis='x', S=s)
+        print("\t    dyT")
+        sys.stdout.flush()
         dyT  = gaussian_derivative_of_tensor(DataT=DataT, Axis='y', S=s)
+        print("\t    dzT")
+        sys.stdout.flush()
         dzT  = gaussian_derivative_of_tensor(DataT=DataT, Axis='z', S=s)
+
         # Dxx
+        print("\t    dxxT")
+        sys.stdout.flush()
         dxxT = gaussian_derivative_of_tensor(DataT=dxT, Axis='x', S=s)
+
         # Dxy
+        print("\t    dxyT")
+        sys.stdout.flush()
         dxyT = gaussian_derivative_of_tensor(DataT=dxT, Axis='y', S=s)
+
         # Dxz
+        print("\t    dxzT")
+        sys.stdout.flush()
         dxzT = gaussian_derivative_of_tensor(DataT=dxT, Axis='z', S=s)
+
         # Dyy
+        print("\t    dyyT")
+        sys.stdout.flush()
         dyyT = gaussian_derivative_of_tensor(DataT=dyT, Axis='y', S=s)
+
         # Dyz
+        print("\t    dyzT")
+        sys.stdout.flush()
         dyzT = gaussian_derivative_of_tensor(DataT=dyT, Axis='z', S=s)
+
         # Dzz
+        print("\t    dzzT")
+        sys.stdout.flush()
         dzzT = gaussian_derivative_of_tensor(DataT=dzT, Axis='z', S=s)
            
         # 3D 
