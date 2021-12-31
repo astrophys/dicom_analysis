@@ -109,7 +109,7 @@ def extract_local_shape(SigmaL=None, DataT=None):
     cSigmaT  = np.zeros(shape)       # Save sigma with max cluster value...
     avgRho  = np.mean(DataT)
     if(len(shape) == 3):
-        for sIdx in len(SigmaL):
+        for sIdx in range(len(SigmaL)):
             s = SigmaL[sIdx]
             print("\tSigma = {}".format(s))
             vesselT = np.zeros(shape)
