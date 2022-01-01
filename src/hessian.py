@@ -125,7 +125,7 @@ def extract_local_shape(SigmaL=None, DataT=None):
                         F = np.sqrt(e1T[i,j,k]**2 + e2T[i,j,k]**2 + e3T[i,j,k]**2)
 
                         # See SEGMENT_gsl/parallel/*/src/hessian.c : compute_vesselness()
-                        Fnorm = F / FrobL[sIdx]
+                        Fnorm = F / frobL[sIdx]
 
                         # This ratio distinguishes ribbons/tubes from sheets/blobs
                         if(e3T[i,j,k] == 0 or DataT[i,j,k] < avgRho):
