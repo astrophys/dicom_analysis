@@ -8,6 +8,7 @@
 # Purpose :
 #
 # How to Run :
+#   python src/dicom_analysis.py path [series|single]
 import sys
 import numpy as np
 import time
