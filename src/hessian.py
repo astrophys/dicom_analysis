@@ -136,8 +136,8 @@ def extract_local_shape(SigmaL=None, DataT=None):
                             Rd = np.abs(e1T[i,j,k] / e3T[i,j,k])
                         alpha = 2   # Constants from Frangi's paper
                         beta  = 2   # Constants from Frangi's paper
-                        vessel = (1 - exp(-alpha*Rc*Rc))*(1.0 - exp(-beta*Fnorm*Fnorm))
-                        cluster = (1 - exp(-alpha*Rd*Rd))*(1.0 - exp(-beta*Fnorm*Fnorm))
+                        vessel = (1 - np.exp(-alpha*Rc*Rc))*(1.0 - np.exp(-beta*Fnorm*Fnorm))
+                        cluster = (1 - np.exp(-alpha*Rd*Rd))*(1.0 - np.exp(-beta*Fnorm*Fnorm))
     
                         if(vessel > vesselT[i,j,k]):
                             vesselT[i,j,k] = vessel
