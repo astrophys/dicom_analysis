@@ -173,12 +173,25 @@ def main():
         if(string.lower() == "y" or string.lower() == "yes"):
             moreClump = True
             # Center
-            print("\nEnter center for clump")
+            print("\nEnter center for clump (e.g. x,y,z)")
             string = input().strip("\n")
             centerV= string.split(',')
-            centerV= [float(c) for c in centerV]
+            cV = [float(c) for c in centerV]
             # Size
-            print("\nEnter radius of clump")
+            print("\nEnter radius of clump (e.g. float)")
+            string = input().strip("\n")
+            r      = float(string)
+            print("\nEnter value of clump (e.g. float)")
+            string = input().strip("\n")
+            v      = float(string)
+            # Create clump
+            for i in range(data.shape[0]):
+                for j in range(data.shape[1]):
+                    for k in range(data.shape[2]):
+                        # displacement
+                        d = ((i - cV[0])**2 + (j - cV[1])**2 + (k - cV[2])**2)
+                        if(d < r):
+                            data[i,j,k] = v
         else :
             moreClump = False
         
