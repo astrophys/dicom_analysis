@@ -39,7 +39,7 @@ def print_help(ExitVal=None):
 
 
 
-def parse_polynomial(String=None)
+def parse_polynomial(String=None):
     """
     ARGS:
         String : expects a polynomial (using 'x') like '2x + 3x**2'
@@ -57,13 +57,31 @@ def parse_polynomial(String=None)
     strL = String.split(' ')
     coeffV = np.zeros(len(strL))
     powerV = np.zeros(len(strL))
+    print(strL)
     for idx in range(len(strL)):
-        term = s.split('x')
+        if(strL[idx] == "+"):
+            continue
+        if(strL[idx] == "-"):
+            strL[idx+1] = -1*float(strL[idx+1])
+            continue
+        term = strL[idx].split('x')
         # No dependency on 'x', e.g. 4
         if(len(term) == 1 and 'x' not in term[0]):
             powerV[idx] = 0
             coeffV[idx] = float(term[0])
-        elif(len(term) == 1):
+        # 
+        elif(len(term) == 2):
+            if(term[0] == ''):
+                coeffV[idx] = 1.0
+            else:
+                coeffV[idx] = float(term[0])
+            if(term[1] == ''):
+                powerV[idx] = 1.0
+            else:
+                powerV[idx] = float(term[1].split("**")[1])
+        else:
+            exit_with_error("ERROR!!! Unexpected case has occurred")
+    return(coeffV, powerV)
 
 
 def main():
@@ -111,9 +129,9 @@ def main():
     print("\tEnter x gradient (e.g. 2, x**2, n/a: ")
     gradX = input().strip("\n")
     
-    try :
-        
-    except ValueError :
+    #try :
+    #    
+    #except ValueError :
 
 
 
