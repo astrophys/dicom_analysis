@@ -47,22 +47,35 @@ def parse_polynomial(String=None):
         Parses text from String and returns the coefficients and exponents of each
         term. This function does not handle dependencies on variables other than 'x'
         or exponential terms
+
+        Currently only works with simple combinations of operators and spacing. 
+        It is best to have spaces between '+' and '-' operators between terms
+             Works : 
+                 -> 2x**2 - 4
+             Fails :
+                 -> 2x**2-4
+                 -> 2x**-1
+                 -> 2x**(2)
     RETURN:
         coeffV  : numpy vector of coefficients for each term
         powerV  : numpy vector of powers for each term
     DEBUG:
     FUTURE:
+        1. Make more robust to handle all combinations of operators and spacing OR add
+           properly error handling for incorrect formatting
     """
     String = String.strip("\n")
     strL = String.split(' ')
     coeffV = np.zeros(len(strL))
     powerV = np.zeros(len(strL))
+    signV  = np.ones(len(strL))     # Use to control sign change
     print(strL)
     for idx in range(len(strL)):
+        ## Handle non-'x' or numeric characters
         if(strL[idx] == "+"):
             continue
         if(strL[idx] == "-"):
-            strL[idx+1] = -1*float(strL[idx+1])
+            signV[idx+1] = -1*signV[idx+1]
             continue
         term = strL[idx].split('x')
         # No dependency on 'x', e.g. 4
@@ -81,6 +94,9 @@ def parse_polynomial(String=None):
                 powerV[idx] = float(term[1].split("**")[1])
         else:
             exit_with_error("ERROR!!! Unexpected case has occurred")
+    # flip signs for '-'s
+    coeffV = coeffV*signV
+    print(coeffV, powerV)
     return(coeffV, powerV)
 
 
@@ -101,13 +117,14 @@ def main():
                         "expected\n".format(sys.version_info[0]))
 
     ###### Get Command Line Options ######
-    if(len(sys.argv) != 2) :
+    if(len(sys.argv) != 2 and len(sys.argv) != 1) :
         print_help(1)
     elif(len(sys.argv) == 2 and "-h" in sys.argv[1]):
         print_help(0)
 
     print("Welcome to genearte_test_data.py!\nLet's get started by answering some"
           "questions.")
+    #parse_polynomial("2x**2 - 4")
     
     ##### Base name
     print("Enter stem for output files:")
