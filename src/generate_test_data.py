@@ -124,7 +124,6 @@ def main():
 
     print("Welcome to genearte_test_data.py!\nLet's get started by answering some"
           "questions.")
-    #parse_polynomial("2x**2 - 4")
     
     ##### Base name
     print("Enter stem for output files:")
@@ -132,8 +131,8 @@ def main():
 
     ##### Dimensions
     print("\tData size (e.g. x,y,z):")
-    sizeS = input().strip("\n")
-    sizeS = sizeS.split(',')
+    string = input().strip("\n")
+    sizeS = string.split(',')
     sizeV = np.zeros([3])
     for idx in range(len(sizeS)):
         if '.' in sizeS[idx]:
@@ -144,13 +143,41 @@ def main():
     ##### Get underlying gradients
     # X 
     print("\tEnter x gradient (e.g. 2, x**2, n/a: ")
-    gradX = input().strip("\n")
-    
-    #try :
-    #    
-    #except ValueError :
+    string = input().strip("\n")
+    xCoeffV,xPowerV = parse_polynomial(string)
+    # Y 
+    print("\tEnter y gradient (e.g. 2, y**2, n/a: ")
+    string = input().strip("\n")
+    yCoeffV,yPowerV = parse_polynomial(string)
+    # Z 
+    print("\tEnter z gradient (e.g. 2, z**2, n/a: ")
+    string = input().strip("\n")
+    zCoeffV,zPowerV = parse_polynomial(string)
+    # Modify 'data'
+    for i in range(len(data.shape[0])):
+        for j in range(len(data.shape[1])):
+            for k in range(len(data.shape[2])):
+                data[i,j,k] = (xCoeffV * (i**xPowerV)) + (yCoeffV * (j**yPowerV)) +
+                              (zCoeffV * (k**zPowerV))
 
-
+    ##### Get clumps to insert
+    moreClump = True
+    while moreClump :
+        print("\tDo you want to add a clump? [Y/N]")
+        string = input().strip("\n")
+        if(string.lower() == "y" or string.lower() == "yes"):
+            moreClump = True
+            # Center
+            print("\tEnter center for clump")
+            string = input().strip("\n")
+            centerV= string.split(',')
+            centerV= [float(c) for c in centerV]
+            # Size
+            print("\tEnter radius of clump")
+        else :
+            moreClump = False
+        
+        
 
     print("Started : %s"%(time.strftime("%D:%H:%M:%S")))
     startTime = time.time()
