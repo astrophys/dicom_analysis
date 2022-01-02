@@ -39,10 +39,11 @@ def print_help(ExitVal=None):
 
 
 
-def parse_polynomial(String=None):
+def parse_polynomial(String=None, Var='x'):
     """
     ARGS:
         String : expects a polynomial (using 'x') like '2x + 3x**2'
+        Var    : Variable / character to split on
     DESCRIPTION:
         Parses text from String and returns the coefficients and exponents of each
         term. This function does not handle dependencies on variables other than 'x'
@@ -69,6 +70,7 @@ def parse_polynomial(String=None):
     coeffV = np.zeros(len(strL))
     powerV = np.zeros(len(strL))
     signV  = np.ones(len(strL))     # Use to control sign change
+    v = Var                         # Better to use one char variable here
     print(strL)
     for idx in range(len(strL)):
         ## Handle non-'x' or numeric characters
@@ -77,9 +79,9 @@ def parse_polynomial(String=None):
         if(strL[idx] == "-"):
             signV[idx+1] = -1*signV[idx+1]
             continue
-        term = strL[idx].split('x')
+        term = strL[idx].split(v)
         # No dependency on 'x', e.g. 4
-        if(len(term) == 1 and 'x' not in term[0]):
+        if(len(term) == 1 and v not in term[0]):
             powerV[idx] = 0
             coeffV[idx] = float(term[0])
         # 
@@ -93,7 +95,7 @@ def parse_polynomial(String=None):
             else:
                 powerV[idx] = float(term[1].split("**")[1])
         else:
-            exit_with_error("ERROR!!! Unexpected case has occurred")
+            exit_with_error("ERROR!!! Unexpected case has occurred = {}".format(term))
     # flip signs for '-'s
     coeffV = coeffV*signV
     print(coeffV, powerV)
@@ -140,26 +142,26 @@ def main():
         if '.' in sizeS[idx]:
             exit_with_error("ERROR!!! dimensions CANNOT be floats\n")
         sizeV[idx] = np.int(sizeS[idx])
-    print(sizeV)
+    print("--> Entered sizeV = {}".format(sizeV))
     data = np.zeros(sizeV)
     
     ##### Get underlying gradients
     # X 
     print("\nEnter x gradient (e.g. 2, x**2, n/a: ")
     string = input().strip("\n")
-    xCoeffV,xPowerV = parse_polynomial(string)
+    xCoeffV,xPowerV = parse_polynomial(String=string, Var='x')
     # Y 
     print("\nEnter y gradient (e.g. 2, y**2, n/a: ")
     string = input().strip("\n")
-    yCoeffV,yPowerV = parse_polynomial(string)
+    yCoeffV,yPowerV = parse_polynomial(String=string, Var='y')
     # Z 
     print("\nEnter z gradient (e.g. 2, z**2, n/a: ")
     string = input().strip("\n")
-    zCoeffV,zPowerV = parse_polynomial(string)
+    zCoeffV,zPowerV = parse_polynomial(String=string, Var='z')
     # Modify 'data'
-    for i in range(len(data.shape[0])):
-        for j in range(len(data.shape[1])):
-            for k in range(len(data.shape[2])):
+    for i in range(data.shape[0]):
+        for j in range(data.shape[1]):
+            for k in range(data.shape[2]):
                 data[i,j,k] = ((xCoeffV * (i**xPowerV)) + (yCoeffV * (j**yPowerV)) +
                               (zCoeffV * (k**zPowerV)))
 
