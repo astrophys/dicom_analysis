@@ -160,15 +160,15 @@ def main():
     
     ##### Get underlying gradients
     # X 
-    print("\nEnter x gradient (e.g. 2, x**2, n/a: ")
+    print("\nEnter x gradient (e.g. 2, x**2, n/a): ")
     string = input().strip("\n")
     xCoeffV,xPowerV = parse_polynomial(String=string, Var='x')
     # Y 
-    print("\nEnter y gradient (e.g. 2, y**2, n/a: ")
+    print("\nEnter y gradient (e.g. 2, y**2, n/a): ")
     string = input().strip("\n")
     yCoeffV,yPowerV = parse_polynomial(String=string, Var='y')
     # Z 
-    print("\nEnter z gradient (e.g. 2, z**2, n/a: ")
+    print("\nEnter z gradient (e.g. 2, z**2, n/a): ")
     string = input().strip("\n")
     zCoeffV,zPowerV = parse_polynomial(String=string, Var='z')
     # Modify 'data'
