@@ -9,8 +9,16 @@
 #   This code interactively generates a test data set to test dicom_analysis.py 
 #
 # How to Run :
-#   python 
+#   python src/generate_test_data.py
 #
+# To Do : 
+#   1. Make this compatible with outputting dicom files. Per Stackoverflow
+#      (https://stackoverflow.com/a/14353973/4021436), the format is complex. This
+#      agrees with my observations.
+#       --> Future (potential) resources : 
+#           a) https://newbedev.com/create-pydicom-file-from-numpy-array
+#           b) https://dicom-numpy.readthedocs.io/en/latest/
+#           c) https://pydicom.github.io/pydicom/stable/tutorials/dataset_basics.html
 import sys
 import numpy as np
 import time
@@ -19,6 +27,7 @@ import os
 import tempfile
 import datetime
 from pydicom.dataset import FileDataset, FileMetaDataset
+import pickle
 # my code
 from error import exit_with_error
 from error import warning
@@ -203,54 +212,16 @@ def main():
     startTime = time.time()
 
     ##### Write data
-    # Follow example : https://pydicom.github.io/pydicom/stable/auto_examples/input_output/plot_write_dicom.html
-    outName="{}.dcm".format(stem)
-    #filename_little_endian = tempfile.NamedTemporaryFile(suffix=suffix).name
-    #filename_big_endian = tempfile.NamedTemporaryFile(suffix=suffix).name
+    #   1. Would prefer the dicom format, but writing files from scratch isn't straight
+    #      forward.
+    #       --> Further investigation is required, save for future Ali
+    #   2. Instead pickle the file. 
+    #       --> Simpler
+    #
+    outFile = open("{}.pkl".format(stem), "wb")
+    pickle.dump(data, outFile, protocol=4)
+    outFile.close()
     
-    print("Setting file meta information...")
-    # Populate required values for file meta information
-    meta = FileMetaDataset()
-    meta.MediaStorageSOPClassUID = "CT Image Storage"
-    meta.MediaStorageSOPInstanceUID = "1.3.6.1.4.1.14519.5.2.1.101692030094434533703823936384802321461"
-    meta.ImplementationClassUID = "1.3.6.1.4.1.22213.1.143"
-    meta.TransferSyntaxUID      = "Implicit VR Little Endian"
-    meta.ImplementationVersionName = "0.5"
-    meta.SourceApplicationEntityTitle = "POSDA"
-    
-    print("Setting dataset values...")
-    # Create the FileDataset instance (initially no data elements, but meta
-    # supplied)
-    ds = FileDataset(outName, {},
-                     file_meta=meta, preamble=b"\0" * 128)
-    
-    # Add the data elements -- not trying to set all required here. Check DICOM
-    # standard
-    ds.PatientName = "Test^Firstname"
-    ds.PatientID = "123456"
-    
-    # Set the transfer syntax
-    ds.is_little_endian = True
-    ds.is_implicit_VR = True
-    
-    # Set creation date/time
-    dt = datetime.datetime.now()
-    ds.ContentDate = dt.strftime('%Y%m%d')
-    timeStr = dt.strftime('%H%M%S.%f')  # long format with micro seconds
-    ds.ContentTime = timeStr
-    
-    print("Writing test file {}", outName)
-    ds.save_as("{}".format(outName))
-    print("File saved.")
-    
-    # Write as a different transfer syntax XXX shouldn't need this but pydicom
-    # 0.9.5 bug not recognizing transfer syntax
-    #ds.file_meta.TransferSyntaxUID = pydicom.uid.ExplicitVRBigEndian
-    #ds.is_little_endian = False
-    #ds.is_implicit_VR = False
-    
-    #print("Writing test file as Big Endian Explicit VR", filename_big_endian)
-    #ds.save_as(filename_big_endian)
 
     print("Ended : %s"%(time.strftime("%D:%H:%M:%S")))
     print("Run Time : {:.4f} h".format((time.time() - startTime)/3600.0))
