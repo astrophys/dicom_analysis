@@ -201,7 +201,9 @@ def main():
     #gaussian_derivative_of_tensor(DataT=testT, Axis='x', S=1, Verbose=True)
     ####
 
-    (vesselT, vSigmaT, clustT, cSigmaT) = extract_local_shape(SigmaL=[1,2], DataT=pixelT)
+    (vesselT, vSigmaT, clustT, cSigmaT) = extract_local_shape(SigmaL=[1], DataT=pixelT)
+
+    ### Add visualization of vesselT and clustT
 
 
     print("Ended : %s"%(time.strftime("%D:%H:%M:%S")))

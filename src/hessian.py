@@ -127,7 +127,7 @@ def extract_local_shape(SigmaL=None, DataT=None):
                         # See SEGMENT_gsl/parallel/*/src/hessian.c : compute_vesselness()
                         Fnorm = F / frobL[sIdx]
 
-                        # This ratio distinguishes ribbons/tubes from sheets/blobs
+                        # vessels and clusters should be > mean density
                         if(e3T[i,j,k] == 0 or DataT[i,j,k] < avgRho):
                             vessel = 0
                             cluster= 0
