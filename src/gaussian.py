@@ -19,7 +19,7 @@ def gaussian_derivative_1D(X=None, Mu=None, S=None):
     FUTURE:
         1. Figure out why I'm off by a negative here
     """
-    return( (1/(S**3 * np.sqrt(2 * np.pi)) * (Mu - X) * np.exp(-(X-Mu)**2 / (2*S**2))))
+    return( -(1/(S**3 * np.sqrt(2 * np.pi)) * (Mu - X) * np.exp(-(X-Mu)**2 / (2*S**2))))
     
 
 

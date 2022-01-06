@@ -112,6 +112,7 @@ def main():
     DEBUG:
     FUTURE:
         1. Check suffixes for correct file types
+        2. Pull out plotting to do it in a separate code.
     """
     ###### Check python version ######
     if(sys.version_info[0] != 3):
@@ -178,12 +179,12 @@ def main():
 
     #### Test Gaussion derivative
     ## 3D
-    #testT = np.zeros([10,10,10])
-    #for i in range(testT.shape[0]):
-    #    for j in range(testT.shape[1]):
-    #        for k in range(testT.shape[2]):
-    #            testT[i,j,k] = 2*i + j*j + 3*k*k*k
-    #gaussian_derivative_of_tensor(DataT=testT, Axis='x', S=1)
+    testT = np.zeros([10,10,10])
+    for i in range(testT.shape[0]):
+        for j in range(testT.shape[1]):
+            for k in range(testT.shape[2]):
+                testT[i,j,k] = 2*i + j*j + 3*k*k*k
+    gaussian_derivative_of_tensor(DataT=testT, Axis='x', S=1, Verbose=True)
     #gaussian_derivative_of_tensor(DataT=testT, Axis='y', S=1)
     #gaussian_derivative_of_tensor(DataT=testT, Axis='z', S=1, Verbose=True)
     ## 2D
@@ -194,13 +195,13 @@ def main():
     ##gaussian_derivative_of_tensor(DataT=testT, Axis='x', S=1, Verbose=True)
     #gaussian_derivative_of_tensor(DataT=testT, Axis='y', S=1, Verbose=True)
     ## 1D
-    testT = np.zeros([10])
-    for i in range(testT.shape[0]):
-        testT[i] = 2*i
-    gaussian_derivative_of_tensor(DataT=testT, Axis='x', S=1, Verbose=True)
+    #testT = np.zeros([10])
+    #for i in range(testT.shape[0]):
+    #    testT[i] = 2*i
+    #gaussian_derivative_of_tensor(DataT=testT, Axis='x', S=1, Verbose=True)
     ####
 
-    (vesselT, vSigmaT, clustT, cSigmaT) = extract_local_shape(SigmaL=[1,2], DataT=pixelT)
+    #(vesselT, vSigmaT, clustT, cSigmaT) = extract_local_shape(SigmaL=[1,2], DataT=pixelT)
 
 
     print("Ended : %s"%(time.strftime("%D:%H:%M:%S")))
