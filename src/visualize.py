@@ -23,6 +23,7 @@ import pydicom
 import pickle
 # my code
 from file_io import read_data
+from error import exit_with_error
     
 
 def print_help(ExitVal=None):
@@ -137,7 +138,13 @@ def main():
         exit_with_error("ERROR!!! {} is invalid value for "
                         "[series|single|pickle]\n".format(inputFmt))
     pixelT = read_data(Path=path, InputFmt=inputFmt)
-    plot_multiple_dicom(PixelT=pixelT)
+    if(len(pixelT.shape) == 2):
+        plot_single_dicom(PixelM=pixelT)
+    elif(len(pixelT.shape)==3):
+        plot_multiple_dicom(PixelT=pixelT)
+    else:
+        exit_with_error("ERROR!!! Code can't handle matrices of "
+                        "dim = {}\n".format(len(pixelT.shape)))
 
     sys.exit(0)
 

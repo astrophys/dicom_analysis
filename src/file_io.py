@@ -51,16 +51,13 @@ def read_data(Path=None, InputFmt=None):
                                 "dimensions! {} != {}\n".format(fPath,shape,data.shape))
             pixelT[:,:,idx] = pixelM
             idx+=1
-        #plot_multiple_dicom(PixelT=pixelT)
 
     elif(InputFmt == "single"):
         data = pydicom.dcmread(Path)
-        pixelM = data.pixel_array
-        #plot_single_dicom(PixelM=pixelM)
+        pixelT = data.pixel_array
     elif(InputFmt == "pickle"):
         inFile = open(Path, "rb")
         pixelT = pickle.load(inFile)
-        #plot_multiple_dicom(PixelT=pixelT)
     else:
         exit_with_error("ERROR!!! {} is invalid value for "
                         "[series|single|pickle]\n".format(inputFmt))
