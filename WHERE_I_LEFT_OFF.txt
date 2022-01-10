@@ -1,6 +1,5 @@
 Done : 
 
 To Do :
-1. Move IO to io.py
-2. Save output of vesselness and clumpiness to files
-3. Add VTK visualization
+1. Save output of vesselness and clumpiness to files
+2. Add VTK visualization

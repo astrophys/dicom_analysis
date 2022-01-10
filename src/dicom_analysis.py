@@ -12,10 +12,6 @@
 import sys
 import numpy as np
 import time
-import glob
-from matplotlib import pyplot as plt
-from matplotlib.ticker import FormatStrFormatter
-from matplotlib.widgets import Slider
 import pydicom
 import pickle
 # my code
@@ -23,6 +19,7 @@ from gaussian import gaussian_derivative_of_tensor
 from hessian import extract_local_shape
 from error import exit_with_error
 from error import warning
+from file_io import read_data
     
 
 def print_help(ExitVal=None):
@@ -47,60 +44,6 @@ def print_help(ExitVal=None):
         "      stem            : The output filename stem\n"
         "                         \n")
     sys.exit(ExitVal)
-
-
-def plot_single_dicom(PixelM=None):
-    """
-    ARGS:
-        PixelM  :  2D - Numpy array extacted from Dicom file
-    DESCRIPTION:
-        Plots PixelM as a heat map
-    RETURN:
-        N/A
-    DEBUG:
-    FUTURE:
-    """
-    fig, ax = plt.subplots(nrows=1, ncols=1)
-    im = ax.imshow(X=PixelM, cmap='bone', interpolation='none')
-   
-    ax.set_title("Plot of Dicom data")
-    fig.colorbar(im, ax=ax)
-
-    #plt.tight_layout()
-    plt.show()
-    #plt.close(fig)
-
-
-def plot_multiple_dicom(PixelT=None):
-    """
-    ARGS:
-        PixelT  :  3D - Numpy array extacted from Dicom file
-    DESCRIPTION:
-        Plots PixelT as a heat map with slider to sweep through
-        the z-axis
-    RETURN:
-        N/A
-    DEBUG:
-    FUTURE:
-    """
-    fig, ax = plt.subplots(nrows=1, ncols=1)
-    im = ax.imshow(X=PixelT[:,:,0], cmap='bone', interpolation='none')
-    # Create sliders
-    sliderAx = fig.add_axes([0.13, 0.025, 0.56, 0.02])
-    slider = Slider(ax=sliderAx, label='z', valmin=0, valmax=PixelT.shape[2]-1, valinit=0)
-    ax.set_title("Plot of Dicom data")
-    fig.colorbar(im, ax=ax)
-    
-    # Define how slider behaves
-    def update_slider(val):
-        z = int(round(slider.val))
-        im = ax.imshow(X=PixelT[:,:,z], cmap='bone', interpolation='none')
-
-    #plt.tight_layout()
-    slider.on_changed(update_slider)
-    plt.show()
-    #plt.close(fig)
-
 
 
 def main():
@@ -139,44 +82,10 @@ def main():
         exit_with_error("ERROR!!! {} is invalid value for "
                         "[series|single|pickle]\n".format(inputFmt))
     stem = sys.argv[3]
+    pixelT = read_data(Path=path, InputFmt=inputFmt)
 
     print("Started : %s"%(time.strftime("%D:%H:%M:%S")))
     startTime = time.time()
-
-    # Extract data
-    if(inputFmt == "series"):
-        # Get list of DICOM files
-        fileL = glob.glob("{}/*.dcm".format(path))      # presumably have dcm suffix...
-        dim = None
-        # Assume all files should have the same dimension...
-        # --> allocate 3D array
-        data = pydicom.dcmread(fileL[0])
-        shape = data.pixel_array.shape
-        pixelT = np.zeros([shape[0], shape[1], len(fileL)])      # 3D matrix, or Tensor
-        idx=0                   # File index
-        # Assume that files are sanely named AND have z-pos embeded in filename
-        fileL = sorted(fileL)
-        for fPath in fileL:
-            data = pydicom.dcmread(fPath)
-            pixelM = data.pixel_array
-            if(shape != pixelM.shape):
-                exit_with_error("ERROR!!! {} contains DICOM files of different "
-                                "dimensions! {} != {}\n".format(fPath,shape,data.shape))
-            pixelT[:,:,idx] = pixelM
-            idx+=1
-        plot_multiple_dicom(PixelT=pixelT)
-
-    elif(inputFmt == "single"):
-        data = pydicom.dcmread(path)
-        pixelM = data.pixel_array
-        plot_single_dicom(PixelM=pixelM)
-    elif(inputFmt == "pickle"):
-        inFile = open(path, "rb")
-        pixelT = pickle.load(inFile)
-        plot_multiple_dicom(PixelT=pixelT)
-    else:
-        exit_with_error("ERROR!!! {} is invalid value for "
-                        "[series|single|pickle]\n".format(inputFmt))
 
 
     #### Test Gaussion derivative
