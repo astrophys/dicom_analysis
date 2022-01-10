@@ -8,7 +8,7 @@
 # Purpose :
 #
 # How to Run :
-#   python src/dicom_analysis.py path [series|single]
+#   python src/dicom_analysis.py path [series|single|pickle] stem
 import sys
 import numpy as np
 import time
@@ -56,7 +56,6 @@ def main():
     DEBUG:
     FUTURE:
         1. Check suffixes for correct file types
-        2. Pull out plotting to do it in a separate code.
     """
     ###### Check python version ######
     if(sys.version_info[0] != 3):
