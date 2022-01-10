@@ -1,5 +1,4 @@
 Done : 
 
 To Do :
-1. Save output of vesselness and clumpiness to files
-2. Add VTK visualization
+1. Add VTK visualization
