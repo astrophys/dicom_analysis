@@ -14,11 +14,13 @@ import glob
 import pydicom
 import numpy as np
 import pickle
-def read_data(Path=None, InputFmt=None):
+from error import exit_with_error
+
+def read_data(Path=None, NFiles=None):
     """
     ARGS:
         Path     : string, Path to file or (if series) directory containing the data
-        InputFmt : string, 'series', 'single' or 'pickel' valid options
+        NFiles   : string, Number of files, i.e. 'series' or 'single' 
     DESCRIPTION:
         This function solely reads in data from either a directory or single file
         (pickle or dcm)
@@ -31,9 +33,16 @@ def read_data(Path=None, InputFmt=None):
     print("\tStarted : %s"%(time.strftime("%D:%H:%M:%S")))
     startTime = time.time()
     # Extract data
-    if(InputFmt == "series"):
+    if(NFiles == "series"):
         # Get list of DICOM files
-        fileL = glob.glob("{}/*.dcm".format(Path))      # presumably have dcm suffix...
+        fileL = glob.glob("{}/*.*".format(Path))      # presumably have dcm suffix...
+        # Get suffixes, ensure that it is dicom
+        suffixL = []
+        for f in fileL:
+            suffix = f.split('.')[-1]
+            if(suffix.lower() != "dcm"):
+                exit_with_error("ERROR!!! suffix {} NOT handled. Expecting dcm "
+                                "instead".format(suffix))
         dim = None
         # Assume all files should have the same dimension...
         # --> allocate 3D array
@@ -52,12 +61,16 @@ def read_data(Path=None, InputFmt=None):
             pixelT[:,:,idx] = pixelM
             idx+=1
 
-    elif(InputFmt == "single"):
-        data = pydicom.dcmread(Path)
-        pixelT = data.pixel_array
-    elif(InputFmt == "pickle"):
-        inFile = open(Path, "rb")
-        pixelT = pickle.load(inFile)
+    elif(NFiles == "single"):
+        suffix = Path.split('.')[-1]
+        if(suffix == "dcm"):
+            data = pydicom.dcmread(Path)
+            pixelT = data.pixel_array
+        elif(suffix == "pkl" or suffix == "pickle"):
+            inFile = open(Path, "rb")
+            pixelT = pickle.load(inFile)
+        else:
+            exit_with_error("ERROR!!! suffix = {} is unhandled, pkl or dcm expected".format(suffix))
     else:
         exit_with_error("ERROR!!! {} is invalid value for "
                         "[series|single|pickle]\n".format(inputFmt))
