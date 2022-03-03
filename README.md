@@ -35,11 +35,11 @@ git clone https://github.com/astrophys/dicom_analysis.git
 python3 ./src/dicom_analysis.py some_file.dcm [series|single]
 ```
 # Visualize
-1. Dicom series
+1. Series of dicom files
 ```
 python src/visualize.py path/to/dicom/dir series
 ```
-2. Dicom single
+2. Single dicom file
 ```
 python src/visualize.py path/to/dicom/file.dcm single
 ```
