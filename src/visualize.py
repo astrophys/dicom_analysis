@@ -105,6 +105,22 @@ def plot_multiple_dicom(PixelT=None):
     #plt.close(fig)
 
 
+def plot_3D(PixelT=None):
+    """
+    ARGS:
+        PixelT  :  3D - Numpy array extacted from Dicom file
+    DESCRIPTION:
+        Plots PixelT in '3D' using vtk
+    RETURN:
+        N/A
+    DEBUG:
+    FUTURE:
+    """
+    import vtk
+    from vtk.util import numpy_support
+    from vtk.util.misc import vtkGetDataRoot
+
+
 
 def main():
     """
@@ -156,6 +172,10 @@ def main():
         else:
             exit_with_error("ERROR!!! Code can't handle matrices of "
                             "dim = {}\n".format(len(pixelT.shape)))
+    if(visType == "3D"):
+        if(nFiles == "series"):
+            exit_with_error("ERROR!!! 'series' with '3D' not yet implemented!\n")
+        plot_3D(PixelT=pixelT)
 
     sys.exit(0)
 
