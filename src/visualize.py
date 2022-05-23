@@ -301,6 +301,8 @@ def main():
     DEBUG:
     FUTURE:
         1. Check suffixes for correct file types
+        2. Add some arxiving so I don't have to rerun the image segmentation each time
+           I change some of the plotting
     """
     ###### Check python version ######
     if(sys.version_info[0] != 3):
@@ -347,7 +349,11 @@ def main():
             exit_with_error("ERROR!!! Code can't handle matrices of "
                             "dim = {}\n".format(len(pixelT.shape)))
     elif(visType == "2DSEG"):
-        pixelT[pixelT < 0] = 0                  # Remove bias from scanner bounds
+        tmpT = np.copy(pixelT)              # Temporary array to massage before segmenting
+        tmpT[tmpT < 0] = 0                  # Remove bias from scanner bounds
+        # Should I do thresholding? - maybe it creates artifacts.
+        thresh,discard = otsu_threshold(tmpT) # Remove image noise 
+        tmpT[tmpT < thresh] = 0
         sigmaL = [1]
         (vesselT, vSigmaT, clustT, cSigmaT) = extract_local_shape(SigmaL=sigmaL, DataT=pixelT)
         if(len(pixelT.shape) == 2):
@@ -362,7 +368,7 @@ def main():
         pixelT[pixelT < 0] = 0                  # Remove bias from scanner bounds
         # Add conditional here
         #thresh,discard = otsu_threshold(pixelT) # Remove image noise 
-        plot_3D(PixelT=pixelT, Thresh=1055)
+        plot_3D(PixelT=pixelT, Thresh=180)
     elif(visType == "HIST"):
         plot_histogram(pixelT)
     else:
