@@ -48,9 +48,10 @@ def print_help(ExitVal=None):
         "      [series|single] : string\n"
         "                           if 'series' : path is a directory with a series of DICOM files\n"
         "                           if 'single' : path is a single DICOM or pkl file\n"
-        "      [2D|3D]:        : string, \n"
-        "                           visualize in 2D (using matplotlib)\n"
-        "                           visualize in 3D (using vtk)\n"
+        "      [2D|2Dseg|3D]   : string, \n"
+        "                           2D     - visualize in 2D (using matplotlib)\n"
+        "                           2D-seg - visualize in 2D (using matplotlib) and segmentation\n"
+        "                           3D     - visualize in 3D (using vtk)\n"
         "                         \n")
     sys.exit(ExitVal)
 
@@ -95,10 +96,11 @@ def plot_histogram(Array=None):
     plt.show()
 
 
-def plot_multiple_dicom(PixelT=None):
+def plot_multiple_dicom(PixelT=None, SegT=None):
     """
     ARGS:
-        PixelT  :  3D - Numpy array extacted from Dicom file
+        PixelT :  3D Numpy array extacted from Dicom file
+        SegT   :  (optional) 3D Numpy array of segmented volume to plot side-by-side 
     DESCRIPTION:
         Plots PixelT as a heat map with slider to sweep through
         the z-axis
@@ -107,18 +109,33 @@ def plot_multiple_dicom(PixelT=None):
     DEBUG:
     FUTURE:
     """
-    fig, ax = plt.subplots(nrows=1, ncols=1)
-    im = ax.imshow(X=PixelT[:,:,0], cmap='bone', interpolation='none')
+    # Decide whether 1 or 2 plots are showed
+    if(SegT is not None):
+        fig = plt.figure()
+        #plt.subplots_adjust(hspace=0.4,wspace=0.4)
+        gs  = fig.add_gridspec(1,2)
+        # MRI / CT image
+        ax = fig.add_subplot(gs[0,0])
+        im = ax.imshow(X=PixelT[:,:,0], cmap='bone', interpolation='none')
+        # Segmented image
+        ax2 = fig.add_subplot(gs[0,1])
+        im2 = ax2.imshow(X=SegT[:,:,0], cmap='bone', interpolation='none')
+    else:
+        fig, ax = plt.subplots(nrows=1, ncols=1)
+        im = ax.imshow(X=PixelT[:,:,0], cmap='bone', interpolation='none')
+        fig.colorbar(im, ax=ax)
+
     # Create sliders
     sliderAx = fig.add_axes([0.13, 0.025, 0.56, 0.02])
     slider = Slider(ax=sliderAx, label='z', valmin=0, valmax=PixelT.shape[2]-1, valinit=0)
     ax.set_title("Plot of Dicom data")
-    fig.colorbar(im, ax=ax)
     
     # Define how slider behaves
     def update_slider(val):
         z = int(round(slider.val))
         im = ax.imshow(X=PixelT[:,:,z], cmap='bone', interpolation='none')
+        if(SegT is not None):
+            im2 = ax2.imshow(X=SegT[:,:,z], cmap='bone', interpolation='none')
 
     #plt.tight_layout()
     slider.on_changed(update_slider)
@@ -308,6 +325,8 @@ def main():
     ## argv[3]
     if(sys.argv[3].upper() == "2D"):
         visType = "2D"
+    elif(sys.argv[3].upper() == "2DSEG"):
+        visType = "2DSEG"
     elif(sys.argv[3].upper() == "3D"):
         visType = "3D"
     else:
@@ -316,13 +335,24 @@ def main():
     pixelT = read_data(Path=path, NFiles=nFiles)
     if(visType == "2D"):
         if(len(pixelT.shape) == 2):
+            exit_with_error("ERROR!! This is yet to be implemented")
             plot_single_dicom(PixelM=pixelT)
         elif(len(pixelT.shape)==3):
             plot_multiple_dicom(PixelT=pixelT)
         else:
             exit_with_error("ERROR!!! Code can't handle matrices of "
                             "dim = {}\n".format(len(pixelT.shape)))
-    if(visType == "3D"):
+    elif(visType == "2DSEG"):
+        #sigmaL = [5,10,20]
+        #(vesselT, vSigmaT, clustT, cSigmaT) = extract_local_shape(SigmaL=sigmaL, DataT=pixelT)
+        if(len(pixelT.shape) == 2):
+            plot_single_dicom(PixelM=pixelT)
+        elif(len(pixelT.shape)==3):
+            plot_multiple_dicom(PixelT=pixelT, SegT=pixelT)
+        else:
+            exit_with_error("ERROR!!! Code can't handle matrices of "
+                            "dim = {}\n".format(len(pixelT.shape)))
+    elif(visType == "3D"):
         #plot_histogram(pixelT)
         pixelT[pixelT < 0] = 0                  # Remove bias from scanner bounds
         # Add conditional here
