@@ -142,16 +142,8 @@ def plot_3D(PixelT=None, Thresh=1080):
     from vtk.util import numpy_support
     from vtk.util.misc import vtkGetDataRoot
     reader  = vtk.vtkStructuredPointsReader()
-    #reader.SetFileName(fname)
-    #reader.ReadAllVectorsOn()       # Necessary? No vectors in file
-    #reader.ReadAllScalarsOn()
-    #reader.SetScalarsName("scalars")
-    #reader.Update()                 # Not sure what to do here.
-    matData = PixelT
     dim     = PixelT.shape
-    numpoints = dim[0]*dim[1]*dim[2]
     scaling   = (1.0, 1.0, 1.0)
-    VTK_DATA_ROOT = vtkGetDataRoot()# string to some Path that DNE
     # Create the standard renderer, render window and interactor
     ren = vtk.vtkRenderer()         # control geom, camera view, light, coords, etc.
     renWin = vtk.vtkRenderWindow()  # place where renderers draw their images.
@@ -179,20 +171,12 @@ def plot_3D(PixelT=None, Thresh=1080):
     volumeProperty.ShadeOn()
     volumeProperty.SetInterpolationTypeToLinear()
     # The mapper / ray cast function know how to render the data
-    # compositeFunction = vtk.vtkVolumeRayCastCompositeFunction()   # Deprecated..
     volumeMapper = vtk.vtkFixedPointVolumeRayCastMapper()
-    #volumeMapper.SetVolumeRayCastFunction(compositeFunction)       # Deprecated..
-    #volumeMapper.setRayCastImage(compositeFunction)                # Deprecated..
-    #volumeMapper.SetInputConnection(newReader.GetOutputPort()) # How do I change bounds?
-    #volumeMapper.SetInputConnection(reader.GetOutputPort()) # How do I change bounds?
-    #volumeMapper.SetInputConnection(outputPort) # How do I change bounds?
     volume = vtk.vtkVolume()
     volume.SetMapper(volumeMapper)      # volume.GetBounds() to see bounds
     volume.SetProperty(volumeProperty)
     outline = vtk.vtkOutlineFilter()
-    #outline.SetInputConnection(newReader.GetOutputPort())
     outline.SetInputConnection(reader.GetOutputPort())
-    #outline.SetInputConnection(outputPort)
     mapOutline = vtk.vtkPolyDataMapper()
     mapOutline.SetInputConnection(outline.GetOutputPort())
     outlineActor = vtk.vtkActor()
@@ -204,19 +188,17 @@ def plot_3D(PixelT=None, Thresh=1080):
     whichcluster = 1 # zero is the void
     countActors = 0
     contActors = []
-    tmp = np.zeros(PixelT.shape)
-    #PixelT = PixelT + np.abs(np.min(PixelT))
-    tmp = (PixelT > Thresh)*255
-    py_data3 = tmp.transpose(2,1,0).flatten()
-    vtk_data_array = numpy_support.numpy_to_vtk(py_data3)
+    tmpT = np.zeros(PixelT.shape)
+    tmpT = (PixelT > Thresh)*255
+    # Flatten to convert to vtk data array
+    pyDataV = tmpT.transpose(2,1,0).flatten()
+    vtkDataArray = numpy_support.numpy_to_vtk(pyDataV)
     cellcentereddata = vtk.vtkImageData()
     cellcentereddata.SetSpacing(scaling)
-    # cellcentereddata.SetSpacing(1,1,1)
     # shift origina so it is centerd in middle of image
     cellcentereddata.SetOrigin((-1.0*(dim[0]+1))/2.0,(-1.0*(dim[1]+1))/2.0,(-1.0*(dim[2]+1))/2.0)
     cellcentereddata.SetDimensions(dim[0]+1,dim[1]+1,dim[2]+1)
-    #cellcentereddata.GetCellData().SetScalars(data.GetPointData().GetScalars())
-    cellcentereddata.GetCellData().SetScalars(vtk_data_array)
+    cellcentereddata.GetCellData().SetScalars(vtkDataArray)
     vtkThreshold = vtk.vtkThreshold()
     vtkThreshold.SetInputArrayToProcess(0,0,0,1,0)
     vtkThreshold.SetInputDataObject(cellcentereddata)
@@ -276,7 +258,7 @@ def plot_3D(PixelT=None, Thresh=1080):
     axes.SetRanges(0,dim[0]-1,0,dim[1]-1,0,dim[2]-1)  # Changes Range!
     axes.SetUseRanges(1)
     ren.AddViewProp(axes)
-    renWin.Render()
+    renWin.Render()                         # Throws supposed error here
     # Change inline function later...
     def CheckAbort(obj, event):
         if obj.GetEventPending() != 0:
