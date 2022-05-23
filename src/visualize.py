@@ -126,10 +126,11 @@ def plot_multiple_dicom(PixelT=None):
     #plt.close(fig)
 
 
-def plot_3D(PixelT=None, Threshold=1080):
+def plot_3D(PixelT=None, Thresh=1080):
     """
     ARGS:
-        PixelT  :  3D - Numpy array extacted from Dicom file
+        PixelT  : 3D - Numpy array extacted from Dicom file
+        Thresh  : float/int, threshold above which to plot
     DESCRIPTION:
         Plots PixelT in '3D' using vtk
     RETURN:
@@ -142,10 +143,10 @@ def plot_3D(PixelT=None, Threshold=1080):
     from vtk.util.misc import vtkGetDataRoot
     reader  = vtk.vtkStructuredPointsReader()
     #reader.SetFileName(fname)
-    reader.ReadAllVectorsOn()       # Necessary? No vectors in file
-    reader.ReadAllScalarsOn()
-    reader.SetScalarsName("scalars")
-    reader.Update()                 # Not sure what to do here.
+    #reader.ReadAllVectorsOn()       # Necessary? No vectors in file
+    #reader.ReadAllScalarsOn()
+    #reader.SetScalarsName("scalars")
+    #reader.Update()                 # Not sure what to do here.
     matData = PixelT
     dim     = PixelT.shape
     numpoints = dim[0]*dim[1]*dim[2]
@@ -183,7 +184,7 @@ def plot_3D(PixelT=None, Threshold=1080):
     #volumeMapper.SetVolumeRayCastFunction(compositeFunction)       # Deprecated..
     #volumeMapper.setRayCastImage(compositeFunction)                # Deprecated..
     #volumeMapper.SetInputConnection(newReader.GetOutputPort()) # How do I change bounds?
-    volumeMapper.SetInputConnection(reader.GetOutputPort()) # How do I change bounds?
+    #volumeMapper.SetInputConnection(reader.GetOutputPort()) # How do I change bounds?
     #volumeMapper.SetInputConnection(outputPort) # How do I change bounds?
     volume = vtk.vtkVolume()
     volume.SetMapper(volumeMapper)      # volume.GetBounds() to see bounds
@@ -204,9 +205,8 @@ def plot_3D(PixelT=None, Threshold=1080):
     countActors = 0
     contActors = []
     tmp = np.zeros(PixelT.shape)
-    PixelT = PixelT + np.abs(np.min(PixelT))
-    thresh = otsu_threshold(PixelT)[0]
-    tmp = (PixelT > thresh)*255
+    #PixelT = PixelT + np.abs(np.min(PixelT))
+    tmp = (PixelT > Thresh)*255
     py_data3 = tmp.transpose(2,1,0).flatten()
     vtk_data_array = numpy_support.numpy_to_vtk(py_data3)
     cellcentereddata = vtk.vtkImageData()
@@ -341,12 +341,11 @@ def main():
             exit_with_error("ERROR!!! Code can't handle matrices of "
                             "dim = {}\n".format(len(pixelT.shape)))
     if(visType == "3D"):
-        # Experimental
-        plot_histogram(pixelT)
-        pixelT[pixelT < 0] = 0
-        #if(nFiles == "series"):
-        #    exit_with_error("ERROR!!! 'series' with '3D' not yet implemented!\n")
-        plot_3D(PixelT=pixelT)
+        #plot_histogram(pixelT)
+        pixelT[pixelT < 0] = 0                  # Remove bias from scanner bounds
+        # Add conditional here
+        #thresh,discard = otsu_threshold(pixelT) # Remove image noise 
+        plot_3D(PixelT=pixelT, Thresh=1055)
 
     sys.exit(0)
 
