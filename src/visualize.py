@@ -21,6 +21,7 @@ from matplotlib import pyplot as plt
 from matplotlib.ticker import FormatStrFormatter
 from matplotlib.widgets import Slider
 from functions import otsu_threshold
+from hessian import extract_local_shape
 import pydicom
 import pickle
 # my code
@@ -48,10 +49,11 @@ def print_help(ExitVal=None):
         "      [series|single] : string\n"
         "                           if 'series' : path is a directory with a series of DICOM files\n"
         "                           if 'single' : path is a single DICOM or pkl file\n"
-        "      [2D|2Dseg|3D]   : string, \n"
+        "      [2D|2Dseg|3D|hist]: string, \n"
         "                           2D     - visualize in 2D (using matplotlib)\n"
         "                           2D-seg - visualize in 2D (using matplotlib) and segmentation\n"
         "                           3D     - visualize in 3D (using vtk)\n"
+        "                           hist   - histogram of the pixel values\n"
         "                         \n")
     sys.exit(ExitVal)
 
@@ -329,6 +331,8 @@ def main():
         visType = "2DSEG"
     elif(sys.argv[3].upper() == "3D"):
         visType = "3D"
+    elif(sys.argv[3].upper() == "HIST"):
+        visType = "HIST"
     else:
         exit_with_error("ERROR!!! {} is invalid value for "
                         "[2D|3D]\n".format(inputFmt))
@@ -343,12 +347,13 @@ def main():
             exit_with_error("ERROR!!! Code can't handle matrices of "
                             "dim = {}\n".format(len(pixelT.shape)))
     elif(visType == "2DSEG"):
-        #sigmaL = [5,10,20]
-        #(vesselT, vSigmaT, clustT, cSigmaT) = extract_local_shape(SigmaL=sigmaL, DataT=pixelT)
+        pixelT[pixelT < 0] = 0                  # Remove bias from scanner bounds
+        sigmaL = [1]
+        (vesselT, vSigmaT, clustT, cSigmaT) = extract_local_shape(SigmaL=sigmaL, DataT=pixelT)
         if(len(pixelT.shape) == 2):
             plot_single_dicom(PixelM=pixelT)
         elif(len(pixelT.shape)==3):
-            plot_multiple_dicom(PixelT=pixelT, SegT=pixelT)
+            plot_multiple_dicom(PixelT=pixelT, SegT=clustT)
         else:
             exit_with_error("ERROR!!! Code can't handle matrices of "
                             "dim = {}\n".format(len(pixelT.shape)))
@@ -358,6 +363,10 @@ def main():
         # Add conditional here
         #thresh,discard = otsu_threshold(pixelT) # Remove image noise 
         plot_3D(PixelT=pixelT, Thresh=1055)
+    elif(visType == "HIST"):
+        plot_histogram(pixelT)
+    else:
+        exit_with_error("ERROR!!! plot type {} is not a valid option".format(visType))
 
     sys.exit(0)
 
