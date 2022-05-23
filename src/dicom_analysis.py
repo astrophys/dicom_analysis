@@ -81,7 +81,7 @@ def main():
         exit_with_error("ERROR!!! {} is invalid value for "
                         "[series|single|pickle]\n".format(inputFmt))
     stem = sys.argv[3]
-    pixelT = read_data(Path=path, InputFmt=inputFmt)
+    pixelT = read_data(Path=path)
 
     print("Started : %s"%(time.strftime("%D:%H:%M:%S")))
     startTime = time.time()
