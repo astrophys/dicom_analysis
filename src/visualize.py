@@ -20,6 +20,7 @@ import glob
 from matplotlib import pyplot as plt
 from matplotlib.ticker import FormatStrFormatter
 from matplotlib.widgets import Slider
+from functions import otsu_threshold
 import pydicom
 import pickle
 # my code
@@ -76,6 +77,24 @@ def plot_single_dicom(PixelM=None):
     #plt.close(fig)
 
 
+def plot_histogram(Array=None):
+    """
+    ARGS:
+        Array :  Numpy array of any dimension
+    DESCRIPTION:
+        Plots histogram of values
+    RETURN:
+        N/A
+    DEBUG:
+    FUTURE:
+    """
+    fig, ax = plt.subplots(nrows=1, ncols=1)
+    uniqV,countV = np.unique(Array, return_counts=True)
+    ax.bar(uniqV, np.log10(countV), align='center', width=1)
+    ax.set_title("Distribution of pixel values")
+    plt.show()
+
+
 def plot_multiple_dicom(PixelT=None):
     """
     ARGS:
@@ -107,7 +126,7 @@ def plot_multiple_dicom(PixelT=None):
     #plt.close(fig)
 
 
-def plot_3D(PixelT=None, Threshold=1500):
+def plot_3D(PixelT=None, Threshold=1080):
     """
     ARGS:
         PixelT  :  3D - Numpy array extacted from Dicom file
@@ -184,54 +203,10 @@ def plot_3D(PixelT=None, Threshold=1500):
     whichcluster = 1 # zero is the void
     countActors = 0
     contActors = []
-    # Care here.
-    #clusterId, clustercount = np.unique(density_array, return_counts = True)
-    #nTotClust = len(clusterId)
-    #if(PlotClusterRange == True):
-    #    # Clusters to plot
-    #    print("NOTE!! Plotting clusters in Range [{} {}]!\n".format(ClusterSizeMin,
-    #            ClusterSizeMax))
-    #    tmpcount = clustercount[clustercount <= ClusterSizeMax]
-    #    tmpId    = clusterId[clustercount <= ClusterSizeMax]
-    #    # Copy is necessary
-    #    clustercount = np.copy(tmpcount)
-    #    clusterId    = np.copy(tmpId)
-    #
-    #    tmpcount = clustercount[clustercount >= ClusterSizeMin]
-    #    tmpId    = clusterId[clustercount >= ClusterSizeMin]
-    #   cluster2PlotId = tmpId
-    #  cluster2Plotcount = tmpcount
-    #else:
-    #    # Top 10 clusters plotted
-    #    print("NOTE!! for sake of expediency, only top 10 clusters plotted!\n")
-    #    sortIdx = (-clustercount).argsort()
-    #    cluster2PlotId = (clusterId[sortIdx])[0:10]
-    #    cluster2Plotcount = (clustercount[sortIdx])[0:10]
-
-    #cluster_array = np.zeros(dim)
-    #print("Number of Clusters : {}".format(nTotClust - 1))  # Exclude 0, which is the background
-    #print("Plotting only Clusters : {}".format(len(cluster2PlotId)))
-    ##print("NOTE!! for sake of expediency, all clusters are same color!\n")
-
-    ############## Cluster Statistics ###############
-    # Loop through clusters, reuse density_array to store clusters that
-    # meet the threshold criteria
-    # for whichcluster in clusterId:
-    #for whichcluster in cluster2PlotId:
-    #    if(whichcluster != 0):
-    #        #print(whichcluster)
-    #        ### Original nested loops ####
-    #        # Write single cluster to density_array
-    #        #for i in range(0,dim[0]):
-    #        #    for j in range (0,dim[1]):
-    #        #        for k in range (0,dim[2]):
-    #        #            if(density_array[i,j,k] == whichcluster):
-    #        ### Use vectorization instead of nested loops here ###
-    #        cluster_array.fill(0)
-    #        cluster_array[density_array == whichcluster] = 50
-    # Move the python array back into a VTK array
     tmp = np.zeros(PixelT.shape)
-    tmp = (PixelT > Threshold )*255
+    PixelT = PixelT + np.abs(np.min(PixelT))
+    thresh = otsu_threshold(PixelT)[0]
+    tmp = (PixelT > thresh)*255
     py_data3 = tmp.transpose(2,1,0).flatten()
     vtk_data_array = numpy_support.numpy_to_vtk(py_data3)
     cellcentereddata = vtk.vtkImageData()
@@ -366,6 +341,9 @@ def main():
             exit_with_error("ERROR!!! Code can't handle matrices of "
                             "dim = {}\n".format(len(pixelT.shape)))
     if(visType == "3D"):
+        # Experimental
+        plot_histogram(pixelT)
+        pixelT[pixelT < 0] = 0
         #if(nFiles == "series"):
         #    exit_with_error("ERROR!!! 'series' with '3D' not yet implemented!\n")
         plot_3D(PixelT=pixelT)
