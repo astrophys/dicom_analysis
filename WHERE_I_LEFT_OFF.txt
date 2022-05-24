@@ -1,8 +1,5 @@
 Done : 
 
 To Do :
-1. Provide all run configurations
-    a) python -m pdb src/visualize.py data/test-128x128x64.pkl single hist
-    #) python -m pdb src/visualize.py data/test-128x128x64.pkl single 3D
-2. gaussian.py:gaussian_derivative_of_tensor(): Handle case when low<0 AND up<0
+1. gaussian.py:gaussian_derivative_of_tensor(): Handle case when low<0 AND up<0
     e.g. Happens when S>=12 for apollo data on z-axis
