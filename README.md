@@ -41,7 +41,10 @@ where
 ```
 python3 src/visualize.py path/to/dicom/dir series 2D
 ```
-![alt text](https://github.com/astrophys/dicom_analysis/blob/main/images/.cancer-slice-2D.png?raw=true)
+![alt text](https://github.com/astrophys/dicom_analysis/blob/main/images/cancer-slice-2D.png?raw=true)
+
+
+
 2. Single dicom file
 ```
 python3 src/visualize.py path/to/dicom/file.dcm single
