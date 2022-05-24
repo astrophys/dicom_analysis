@@ -109,11 +109,11 @@ python3 src/visualize.py output_clust.pkl single 3D 0.35
 ```
 <img src="https://github.com/astrophys/dicom_analysis/blob/main/images/seg-series-3D.png" width="400" />
 
- a) `single` : denotes a single file being read 
- 
- b) `3D`     : flag to indicate plotting the 2D segmented data alongside the raw data.
- 
- c) `0.35`   : threshold to plot above. Could use string 'otsu' for automatic thresholding
+* `single` : denotes a single file being read 
+
+* `3D`     : flag to indicate plotting the 2D segmented data alongside the raw data.
+
+* `0.35`   : threshold to plot above. Could use string 'otsu' for automatic thresholding
 
 
 
