@@ -371,7 +371,7 @@ def main():
     pixelT = read_data(Path=path, NFiles=nFiles)
     if(visType == "2D"):
         if(len(pixelT.shape) == 2):
-            exit_with_error("ERROR!! This is yet to be implemented")
+            #exit_with_error("ERROR!! This is yet to be implemented")
             plot_single_dicom(PixelM=pixelT)
         elif(len(pixelT.shape)==3):
             plot_multiple_dicom(PixelT=pixelT)
