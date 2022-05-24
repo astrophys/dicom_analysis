@@ -80,8 +80,9 @@ def gaussian_derivative_of_tensor(DataT=None, Axis=None, S=None, Verbose=False):
            Clearly it does pretty well in the x and y axis b/c the function is
            moderately changing. Clearly it is too low resolution for resolving the 
            fast changing z-axis.
-        
     FUTURE:
+        1. Handle case when low<0 AND up<0. 
+            e.g. Happens when S>=12 for apollo data on z-axis
     """
     nSig        = 3                     # Number of sigma to use for kernelWidth
     kW          = int(2 * nSig * S + 1) # 3 sigma left of center, 3 sigma right of center

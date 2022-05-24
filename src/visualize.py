@@ -114,25 +114,42 @@ def plot_multiple_dicom(PixelT=None, SegT=None):
     FUTURE:
     """
     # Decide whether 1 or 2 plots are showed
+    labSize = 6
     if(SegT is not None):
         fig = plt.figure()
         #plt.subplots_adjust(hspace=0.4,wspace=0.4)
         gs  = fig.add_gridspec(1,2)
+        # Adjust spacing between plots - https://stackoverflow.com/a/6541454/4021436
+        plt.subplots_adjust(wspace=0.6)
         # MRI / CT image
         ax = fig.add_subplot(gs[0,0])
         im = ax.imshow(X=PixelT[:,:,0], cmap='bone', interpolation='none')
+        # make colorbar size of plot - https://stackoverflow.com/a/56900830/4021436
+        cax = fig.add_axes([ax.get_position().x1+0.01,ax.get_position().y0,0.02,ax.get_position().height])
+        clb = plt.colorbar(im, cax=cax) # Similar to fig.colorbar(im, cax = cax)
+        clb.ax.tick_params(labelsize=labSize)    # Change size of colorbar font
+        #divider = make_axes_locatable(ax)
+        #cax = divider.append_axes("right", size="5%", pad=0.05)
+        #fig.colorbar(im, ax=ax)
         # Segmented image
         ax2 = fig.add_subplot(gs[0,1])
         im2 = ax2.imshow(X=SegT[:,:,0], cmap='bone', interpolation='none')
+        cax2 = fig.add_axes([ax2.get_position().x1+0.01,ax2.get_position().y0,0.02,ax2.get_position().height])
+        clb2 = plt.colorbar(im2, cax=cax2) # Similar to fig.colorbar(im, cax = cax)
+        clb2.ax.tick_params(labelsize=labSize)    # Change size of colorbar font
+        #fig.colorbar(im2, ax=ax2)
+        ax2.set_title("Segmented Data")
     else:
         fig, ax = plt.subplots(nrows=1, ncols=1)
         im = ax.imshow(X=PixelT[:,:,0], cmap='bone', interpolation='none')
-        fig.colorbar(im, ax=ax)
+        clb = fig.colorbar(im, ax=ax)
+        clb.ax.tick_params(labelsize=labSize)    # Change size of colorbar font
 
     # Create sliders
-    sliderAx = fig.add_axes([0.13, 0.025, 0.56, 0.02])
+    sliderAx = fig.add_axes([0.13, 0.20, 0.76, 0.02])
     slider = Slider(ax=sliderAx, label='z', valmin=0, valmax=PixelT.shape[2]-1, valinit=0)
-    ax.set_title("Plot of Dicom data")
+    ax.set_title("Raw DICOM Data")
+    #fig.suptitle("Plot of Dicom data")
     
     # Define how slider behaves
     def update_slider(val):
