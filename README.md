@@ -124,4 +124,3 @@ python3 src/visualize.py output_clust.pkl single 3D 0.35
 1. Clark K, et al. The Cancer Imaging Archive (TCIA): Maintaining and Operating a Public Information Repository, Journal of Digital Imaging, Volume 26, Number 6, December, 2013, pp 1045-1057. DOI: 10.1007/s10278-013-9622-7
 2. Snedden A, et al. A new multi-scale structure finding algorithm to identify cosmological structure, Journal of Computational Physics, Volume 299, 2015, pp 92-97. DOI: 10.1016/j.jcp.2015.07.004
 
-#### Other Useful Links :  
