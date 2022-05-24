@@ -360,7 +360,7 @@ def main():
         visType = "3D"
         thresh = sys.argv[4].upper()
         try :
-            thresh = int(thresh)
+            thresh = float(thresh)
         except ValueError :
             thresh = thresh
     elif(sys.argv[3].upper() == "HIST"):
