@@ -31,18 +31,18 @@ git clone https://github.com/astrophys/dicom_analysis.git
 ```
 
 ## Usage:
-# Segment the images
+### Segment the images
 ```
 python3 src/dicom_analysis.py path/to/dicom/dir series output 1,2,3
 ```
 where 
-# Visualize
+### Visualize
 1. Series of dicom files in 2D (using `matplotlib`) 
 ```
 python3 src/visualize.py path/to/dicom/dir series 2D
 ```
-![alt text](https://github.com/astrophys/dicom_analysis/blob/main/images/cancer-slice-2D.png?raw=true)
-<img src="https://github.com/astrophys/dicom_analysis/blob/main/images/cancer-slice-2D.png" width="200" />
+<!-- ![alt text](https://github.com/astrophys/dicom_analysis/blob/main/images/cancer-slice-2D.png?raw=true)-->
+<img src="https://github.com/astrophys/dicom_analysis/blob/main/images/cancer-slice-2D.png" width="400" />
 
 
 
@@ -65,7 +65,7 @@ python3 src/visualize.py path/to/dicom/dir series 3D 1100
 
 
 
-<!-- -->
+
 
 #### References:
 1. 
