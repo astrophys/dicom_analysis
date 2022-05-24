@@ -142,14 +142,15 @@ def plot_multiple_dicom(PixelT=None, SegT=None):
         clb2.ax.tick_params(labelsize=labSize)    # Change size of colorbar font
         #fig.colorbar(im2, ax=ax2)
         ax2.set_title("Segmented Data")
+        sliderAx = fig.add_axes([0.13, 0.20, 0.76, 0.02])
     else:
         fig, ax = plt.subplots(nrows=1, ncols=1)
         im = ax.imshow(X=PixelT[:,:,0], cmap='bone', interpolation='none')
         clb = fig.colorbar(im, ax=ax)
         clb.ax.tick_params(labelsize=labSize)    # Change size of colorbar font
+        sliderAx = fig.add_axes([0.18, 0.025, 0.56, 0.02])
 
     # Create sliders
-    sliderAx = fig.add_axes([0.13, 0.20, 0.76, 0.02])
     slider = Slider(ax=sliderAx, label='z', valmin=0, valmax=PixelT.shape[2]-1, valinit=0)
     ax.set_title("Raw DICOM Data")
     #fig.suptitle("Plot of Dicom data")
